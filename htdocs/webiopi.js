@@ -73,7 +73,7 @@ function WebIOPi() {
 	this.readyCallback = null;
 	this.context = "/";
 	this.GPIO = Array(54);
-	this.PINS = Array(27);
+	this.PINS = Array();
 
 	this.TYPE = {
 			DNC: {value: 0, style: "DNC", label: "--"},
@@ -182,8 +182,9 @@ function WebIOPi() {
 
 WebIOPi.prototype.init = function() {
 	$.getJSON(w().context + "map", function(data) {
-		var count = w().PINS.length;
-		for (i = 0; i<count-1; i++) {
+		var count = data.length;
+		w().PINS = Array(count + 1);
+		for (i = 0; i<count; i++) {
 			var type = w().TYPE.GPIO;
 			var label = data[i];
 			
@@ -531,6 +532,7 @@ function RPiHeader() {
 }
 
 RPiHeader.prototype.getPinCell = function (pin) {
+	console.log(pin);
 	var cell = $('<td align="center">');
 	var button;
 	if (w().PINS[pin].type.value == w().TYPE.GPIO.value) {
@@ -577,7 +579,7 @@ RPiHeader.prototype.getFunctionCell = function (pin) {
 RPiHeader.prototype.createTable = function (containerId) {
 	var table = $("<table>");
 	table.attr("id", "RPiHeader")
-	for (var pin=1; pin<=26; pin++) {
+	for (var pin=1; pin<=w().PINS.length - 1; pin++) {
 		var line = 	$('<tr>');
 		line.append(this.getFunctionCell(pin))
 		line.append(this.getDescriptionCell(pin, "right"))
